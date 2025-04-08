@@ -76,10 +76,9 @@ class AppDelegate: NSObject, NSApplicationDelegate {
         window?.orderOut(nil) // Hide window initially
         
         // Make window transparent and rounded
-        window?.backgroundColor = .clear
-        window?.isOpaque = false
-        window?.hasShadow = true
-        window?.titlebarAppearsTransparent = true
+        window?.titlebarAppearsTransparent = false
+        window?.backgroundColor = NSColor.windowBackgroundColor.withAlphaComponent(0.95)
+        window?.isOpaque = true
         
         // Add rounded corners
         if let contentView = window?.contentView {

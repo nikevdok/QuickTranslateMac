@@ -14,17 +14,18 @@ struct ContentView: View {
     @State private var targetLanguage: String = "es"
     @State private var isTranslating: Bool = false
     @State private var errorMessage: String = ""
+    @State private var isHorizontalLayout: Bool = true
     @Environment(\.dismiss) private var dismiss
+    @Environment(\.colorScheme) private var colorScheme
+    @Environment(\.locale) private var locale
     
-    private let languages = [
-        "en": "English",
-        "es": "Spanish",
-        "fr": "French",
-        "de": "German",
-        "it": "Italian",
-        "pt": "Portuguese",
-        "ru": "Russian"
-    ]
+    private let languageCodes = ["en", "es", "fr", "de", "it", "pt", "ru"]
+    
+    private func localizedLanguageName(for code: String) -> String {
+        let systemLanguage = locale.language.languageCode?.identifier ?? "en"
+        let languageLocale = Locale(identifier: "\(systemLanguage)_\(systemLanguage.uppercased())")
+        return languageLocale.localizedString(forLanguageCode: code)?.capitalized ?? code.uppercased()
+    }
     
     private let translations: [String: [String: String]] = [
         "en": [
@@ -75,12 +76,28 @@ struct ContentView: View {
         return translations[sourceLanguage]?[key] ?? translations["en"]![key]!
     }
     
+    private var backgroundColor: Color {
+        colorScheme == .dark ? Color(NSColor.windowBackgroundColor).opacity(0.95) : Color.white.opacity(0.95)
+    }
+    
+    private var textFieldBackground: Color {
+        colorScheme == .dark ? Color(NSColor.textBackgroundColor).opacity(0.7) : Color.white.opacity(0.7)
+    }
+    
+    private var textColor: Color {
+        colorScheme == .dark ? .white : .black
+    }
+    
+    private var secondaryTextColor: Color {
+        colorScheme == .dark ? .gray.opacity(0.8) : .gray
+    }
+    
     var body: some View {
         VStack(spacing: 20) {
             HStack {
                 Picker("From", selection: $sourceLanguage) {
-                    ForEach(Array(languages.keys.sorted()), id: \.self) { code in
-                        Text(languages[code] ?? code).tag(code)
+                    ForEach(languageCodes.sorted(), id: \.self) { code in
+                        Text(localizedLanguageName(for: code)).tag(code)
                     }
                 }
                 .frame(width: 150)
@@ -93,32 +110,34 @@ struct ContentView: View {
                 .help(localizedString("swap"))
                 
                 Picker("To", selection: $targetLanguage) {
-                    ForEach(Array(languages.keys.sorted()), id: \.self) { code in
-                        Text(languages[code] ?? code).tag(code)
+                    ForEach(languageCodes.sorted(), id: \.self) { code in
+                        Text(localizedLanguageName(for: code)).tag(code)
                     }
                 }
                 .frame(width: 150)
                 
+                Button(action: { isHorizontalLayout.toggle() }) {
+                    Image(systemName: isHorizontalLayout ? "rectangle.split.2x1" : "rectangle.split.1x2")
+                        .foregroundColor(secondaryTextColor)
+                }
+                .buttonStyle(.plain)
+                .help(isHorizontalLayout ? "Switch to vertical layout" : "Switch to horizontal layout")
+                
                 Button(action: { dismiss() }) {
                     Image(systemName: "xmark.circle.fill")
-                        .foregroundColor(.gray)
+                        .foregroundColor(secondaryTextColor)
                 }
                 .buttonStyle(.plain)
             }
             
-            VStack(alignment: .leading, spacing: 5) {
-                Text(localizedString("enter_text"))
-                    .font(.caption)
-                    .foregroundColor(.gray)
-                TextEditor(text: $inputText)
-                    .frame(height: 120)
-                    .padding(4)
-                    .background(Color.white.opacity(0.7))
-                    .cornerRadius(8)
-                    .overlay(
-                        RoundedRectangle(cornerRadius: 8)
-                            .stroke(Color.gray.opacity(0.2), lineWidth: 1)
-                    )
+            if isHorizontalLayout {
+                HStack(spacing: 20) {
+                    textFields
+                }
+            } else {
+                VStack(spacing: 20) {
+                    textFields
+                }
             }
             
             Button(action: translate) {
@@ -137,30 +156,87 @@ struct ContentView: View {
                     .foregroundColor(.red)
                     .font(.caption)
             }
+        }
+        .padding()
+        .frame(width: isHorizontalLayout ? 600 : 400, height: isHorizontalLayout ? 300 : 450)
+        .background(
+            RoundedRectangle(cornerRadius: 12)
+                .fill(backgroundColor)
+                .shadow(radius: 10)
+        )
+    }
+    
+    private var textFields: some View {
+        Group {
+            VStack(alignment: .leading, spacing: 5) {
+                HStack {
+                    Text(localizedString("enter_text"))
+                        .font(.caption)
+                        .foregroundColor(secondaryTextColor)
+                    
+                    Spacer()
+                    
+                    Button(action: pasteFromClipboard) {
+                        Image(systemName: "doc.on.clipboard")
+                            .foregroundColor(secondaryTextColor)
+                    }
+                    .buttonStyle(.plain)
+                    .help("Paste from clipboard")
+                }
+                
+                TextEditor(text: $inputText)
+                    .frame(height: 120)
+                    .padding(4)
+                    .background(textFieldBackground)
+                    .cornerRadius(8)
+                    .overlay(
+                        RoundedRectangle(cornerRadius: 8)
+                            .stroke(Color.gray.opacity(0.2), lineWidth: 1)
+                    )
+                    .foregroundColor(textColor)
+            }
             
             VStack(alignment: .leading, spacing: 5) {
-                Text(localizedString("translation"))
-                    .font(.caption)
-                    .foregroundColor(.gray)
+                HStack {
+                    Text(localizedString("translation"))
+                        .font(.caption)
+                        .foregroundColor(secondaryTextColor)
+                    
+                    Spacer()
+                    
+                    Button(action: copyToClipboard) {
+                        Image(systemName: "doc.on.doc")
+                            .foregroundColor(secondaryTextColor)
+                    }
+                    .buttonStyle(.plain)
+                    .help("Copy translation to clipboard")
+                    .disabled(outputText.isEmpty)
+                }
+                
                 TextEditor(text: $outputText)
                     .frame(height: 120)
                     .padding(4)
-                    .background(Color.white.opacity(0.7))
+                    .background(textFieldBackground)
                     .cornerRadius(8)
                     .overlay(
                         RoundedRectangle(cornerRadius: 8)
                             .stroke(Color.gray.opacity(0.2), lineWidth: 1)
                     )
                     .disabled(true)
+                    .foregroundColor(textColor)
             }
         }
-        .padding()
-        .frame(width: 400, height: 450)
-        .background(
-            RoundedRectangle(cornerRadius: 12)
-                .fill(Color.white.opacity(0.8))
-                .shadow(radius: 10)
-        )
+    }
+    
+    private func pasteFromClipboard() {
+        if let clipboardString = NSPasteboard.general.string(forType: .string) {
+            inputText = clipboardString
+        }
+    }
+    
+    private func copyToClipboard() {
+        NSPasteboard.general.clearContents()
+        NSPasteboard.general.setString(outputText, forType: .string)
     }
     
     private func swapLanguages() {
