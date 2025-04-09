@@ -12,19 +12,34 @@ struct ContentView: View {
     @State private var outputText: String = ""
     @State private var sourceLanguage: String = "en"
     @State private var targetLanguage: String = "es"
+    @State private var interfaceLanguage: String = "en"
     @State private var isTranslating: Bool = false
     @State private var errorMessage: String = ""
     @State private var isHorizontalLayout: Bool = true
+    @State private var debounceTimer: Timer?
     @Environment(\.dismiss) private var dismiss
     @Environment(\.colorScheme) private var colorScheme
     @Environment(\.locale) private var locale
     
-    private let languageCodes = ["en", "es", "fr", "de", "it", "pt", "ru"]
+    private let languageCodes = ["en", "es", "fr", "de", "it", "pt", "ru", "zh", "ar", "hi"]
     
     private func localizedLanguageName(for code: String) -> String {
-        let systemLanguage = locale.language.languageCode?.identifier ?? "en"
-        let languageLocale = Locale(identifier: "\(systemLanguage)_\(systemLanguage.uppercased())")
-        return languageLocale.localizedString(forLanguageCode: code)?.capitalized ?? code.uppercased()
+        // Create a locale based on the interface language
+        let locale = Locale(identifier: interfaceLanguage)
+        
+        // Try to get the localized name in the interface language
+        if let localizedName = locale.localizedString(forLanguageCode: code) {
+            return localizedName
+        }
+        
+        // Fallback to English if localization fails
+        let englishLocale = Locale(identifier: "en")
+        if let englishName = englishLocale.localizedString(forLanguageCode: code) {
+            return englishName
+        }
+        
+        // If all else fails, return the language code
+        return code
     }
     
     private let translations: [String: [String: String]] = [
@@ -32,48 +47,86 @@ struct ContentView: View {
             "enter_text": "Enter text to translate:",
             "translation": "Translation:",
             "translate": "Translate",
-            "swap": "Swap languages"
+            "swap": "Swap languages",
+            "from": "From",
+            "to": "To"
         ],
         "es": [
             "enter_text": "Ingrese el texto a traducir:",
             "translation": "Traducción:",
             "translate": "Traducir",
-            "swap": "Intercambiar idiomas"
+            "swap": "Intercambiar idiomas",
+            "from": "De",
+            "to": "A"
         ],
         "fr": [
             "enter_text": "Entrez le texte à traduire:",
             "translation": "Traduction:",
             "translate": "Traduire",
-            "swap": "Échanger les langues"
+            "swap": "Échanger les langues",
+            "from": "De",
+            "to": "À"
         ],
         "de": [
             "enter_text": "Text zum Übersetzen eingeben:",
             "translation": "Übersetzung:",
             "translate": "Übersetzen",
-            "swap": "Sprachen tauschen"
+            "swap": "Sprachen tauschen",
+            "from": "Von",
+            "to": "Nach"
         ],
         "it": [
             "enter_text": "Inserisci il testo da tradurre:",
             "translation": "Traduzione:",
             "translate": "Tradurre",
-            "swap": "Scambia lingue"
+            "swap": "Scambia lingue",
+            "from": "Da",
+            "to": "A"
         ],
         "pt": [
             "enter_text": "Digite o texto para traduzir:",
             "translation": "Tradução:",
             "translate": "Traduzir",
-            "swap": "Trocar idiomas"
+            "swap": "Trocar idiomas",
+            "from": "De",
+            "to": "Para"
         ],
         "ru": [
             "enter_text": "Введите текст для перевода:",
             "translation": "Перевод:",
             "translate": "Перевести",
-            "swap": "Поменять языки"
+            "swap": "Поменять языки",
+            "from": "Из",
+            "to": "В"
+        ],
+        "zh": [
+            "enter_text": "输入要翻译的文本：",
+            "translation": "翻译：",
+            "translate": "翻译",
+            "swap": "交换语言",
+            "from": "从",
+            "to": "到"
+        ],
+        "ar": [
+            "enter_text": "أدخل النص للترجمة:",
+            "translation": "الترجمة:",
+            "translate": "ترجمة",
+            "swap": "تبديل اللغات",
+            "from": "من",
+            "to": "إلى"
+        ],
+        "hi": [
+            "enter_text": "अनुवाद के लिए पाठ दर्ज करें:",
+            "translation": "अनुवाद:",
+            "translate": "अनुवाद करें",
+            "swap": "भाषाएँ बदलें",
+            "from": "से",
+            "to": "में"
         ]
     ]
     
     private func localizedString(_ key: String) -> String {
-        return translations[sourceLanguage]?[key] ?? translations["en"]![key]!
+        return translations[interfaceLanguage]?[key] ?? translations["en"]![key]!
     }
     
     private var backgroundColor: Color {
@@ -95,12 +148,31 @@ struct ContentView: View {
     var body: some View {
         VStack(spacing: 20) {
             HStack {
-                Picker("From", selection: $sourceLanguage) {
+                Menu {
+                    ForEach(languageCodes.sorted(), id: \.self) { code in
+                        Button(action: { interfaceLanguage = code }) {
+                            HStack {
+                                Text(localizedLanguageName(for: code))
+                                if interfaceLanguage == code {
+                                    Image(systemName: "checkmark")
+                                }
+                            }
+                        }
+                    }
+                } label: {
+                    Image(systemName: "globe")
+                        .foregroundColor(secondaryTextColor)
+                }
+                .menuStyle(.borderlessButton)
+                .frame(width: 30)
+                
+                Picker(localizedString("from"), selection: $sourceLanguage) {
                     ForEach(languageCodes.sorted(), id: \.self) { code in
                         Text(localizedLanguageName(for: code)).tag(code)
                     }
                 }
                 .frame(width: 150)
+                .environment(\.layoutDirection, sourceLanguage == "ar" ? .rightToLeft : .leftToRight)
                 
                 Button(action: swapLanguages) {
                     Image(systemName: "arrow.left.arrow.right")
@@ -109,12 +181,18 @@ struct ContentView: View {
                 .buttonStyle(.plain)
                 .help(localizedString("swap"))
                 
-                Picker("To", selection: $targetLanguage) {
+                Picker(localizedString("to"), selection: $targetLanguage) {
                     ForEach(languageCodes.sorted(), id: \.self) { code in
                         Text(localizedLanguageName(for: code)).tag(code)
                     }
                 }
                 .frame(width: 150)
+                .environment(\.layoutDirection, targetLanguage == "ar" ? .rightToLeft : .leftToRight)
+                .onChange(of: targetLanguage) { _ in
+                    if !inputText.isEmpty {
+                        translate()
+                    }
+                }
                 
                 Button(action: { isHorizontalLayout.toggle() }) {
                     Image(systemName: isHorizontalLayout ? "rectangle.split.2x1" : "rectangle.split.1x2")
@@ -134,10 +212,12 @@ struct ContentView: View {
                 HStack(spacing: 20) {
                     textFields
                 }
+                .environment(\.layoutDirection, sourceLanguage == "ar" ? .rightToLeft : .leftToRight)
             } else {
                 VStack(spacing: 20) {
                     textFields
                 }
+                .environment(\.layoutDirection, sourceLanguage == "ar" ? .rightToLeft : .leftToRight)
             }
             
             Button(action: translate) {
@@ -157,6 +237,7 @@ struct ContentView: View {
                     .font(.caption)
             }
         }
+        .environment(\.layoutDirection, sourceLanguage == "ar" ? .rightToLeft : .leftToRight)
         .padding()
         .frame(width: isHorizontalLayout ? 600 : 400, height: isHorizontalLayout ? 300 : 450)
         .background(
@@ -194,6 +275,9 @@ struct ContentView: View {
                             .stroke(Color.gray.opacity(0.2), lineWidth: 1)
                     )
                     .foregroundColor(textColor)
+                    .onChange(of: inputText) { _ in
+                        debounceTranslation()
+                    }
             }
             
             VStack(alignment: .leading, spacing: 5) {
@@ -237,6 +321,20 @@ struct ContentView: View {
     private func copyToClipboard() {
         NSPasteboard.general.clearContents()
         NSPasteboard.general.setString(outputText, forType: .string)
+    }
+    
+    private func debounceTranslation() {
+        // Cancel any existing timer
+        debounceTimer?.invalidate()
+        
+        // Start a new timer
+        debounceTimer = Timer.scheduledTimer(withTimeInterval: 0.5, repeats: false) { _ in
+            if !inputText.isEmpty {
+                translate()
+            } else {
+                outputText = ""
+            }
+        }
     }
     
     private func swapLanguages() {

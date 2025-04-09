@@ -69,7 +69,7 @@ class AppDelegate: NSObject, NSApplicationDelegate {
         )
         
         // Configure window appearance
-        window?.title = "QuickTranslate v1.1"
+        window?.title = "QuickTranslate v1.2"
         window?.center()
         window?.contentView = contentView
         window?.isReleasedWhenClosed = false
