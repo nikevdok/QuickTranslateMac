@@ -7,6 +7,14 @@
 
 ⚠️ **Security Notice**: This application contains digital watermarks and protection measures. Unauthorized copying, modification, or distribution is strictly prohibited. See [SECURITY.md](SECURITY.md) for details.
 
+## 🔒 Private Components
+Some components of this application are kept private for security reasons. To use the application:
+
+1. Copy `PrivateComponents.template.swift` to `PrivateComponents.swift`
+2. Fill in your private API keys and configuration
+3. DO NOT commit `PrivateComponents.swift` to git
+4. Keep your private files secure and local
+
 [English](#english) | [Русский](#русский)
 
 # English

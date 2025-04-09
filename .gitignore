@@ -73,8 +73,7 @@ Dependencies/
 # fastlane
 #
 # It is recommended to not store the screenshots in the git repo.
-# Instead, store the tests snapshot files in a different repository.
-#
+# Instead, use fastlane to re-generate the screenshots whenever they are needed.
 # For more information about the recommended setup visit:
 # https://docs.fastlane.tools/best-practices/source-control/#source-control
 
@@ -85,10 +84,17 @@ fastlane/test_output
 
 # Code Injection
 #
-# After new code injection tools there's a generated folder /iOSInjectionProject
+# After new code Injection tools there's a generated folder /iOSInjectionProject
 # https://github.com/johnno1962/injectionforxcode
 
 iOSInjectionProject/
+
+# Private files
+PrivateComponents.swift
+*.private.swift
+config.private.json
+secrets.json
+api_keys.json
 
 # macOS
 .DS_Store
