@@ -69,15 +69,25 @@ open QuickTranslate.xcodeproj
 ```
 3. Build the project (⌘B)
 
-## 🤝 Contributing
+## 📄 License
 
-We welcome contributions! If you'd like to contribute:
+This project is licensed under a modified MIT License. Key terms include:
+- Commercial use requires explicit written permission
+- Derivative works must include original copyright notice and repository link
+- Modifications must be clearly documented and attributed
+- The software may not be used in ways that compete with the original project
 
-1. Fork the repository
-2. Create your feature branch (`git checkout -b feature/amazing-feature`)
-3. Commit your changes (`git commit -m 'Add some amazing feature'`)
-4. Push to the branch (`git push origin feature/amazing-feature`)
-5. Open a Pull Request
+See the [LICENSE](LICENSE) file for complete terms and conditions.
+
+## 👨‍💻 Author
+
+[Nikita Evdokimov](https://github.com/nikevdok)
+
+## 🙏 Acknowledgments
+
+- [MyMemory API](https://mymemory.translated.net/) for providing translation service
+- [SwiftUI](https://developer.apple.com/xcode/swiftui/) for the amazing framework
+- [Apple](https://www.apple.com) for macOS and development tools
 
 ---
 
@@ -144,28 +154,22 @@ open QuickTranslate.xcodeproj
 ```
 3. Соберите проект (⌘B)
 
-## 🤝 Вклад в проект
+## 📄 Лицензия
 
-Мы приветствуем вклад в развитие проекта! Если вы хотите внести свой вклад:
+Этот проект распространяется под модифицированной лицензией MIT. Основные условия:
+- Коммерческое использование требует явного письменного разрешения
+- Производные работы должны включать оригинальное уведомление об авторских правах и ссылку на репозиторий
+- Модификации должны быть четко документированы и атрибутированы
+- Программное обеспечение не может использоваться способами, конкурирующими с оригинальным проектом
 
-1. Форкните репозиторий
-2. Создайте ветку для вашей функции (`git checkout -b feature/amazing-feature`)
-3. Зафиксируйте изменения (`git commit -m 'Add some amazing feature'`)
-4. Отправьте изменения в ветку (`git push origin feature/amazing-feature`)
-5. Откройте Pull Request
+Полные условия использования смотрите в файле [LICENSE](LICENSE).
 
-## 📄 License / Лицензия
+## 👨‍💻 Автор
 
-This project is licensed under the MIT License - see the [LICENSE](LICENSE) file for details.
+[Никита Евдокимов](https://github.com/nikevdok)
 
-Этот проект распространяется под лицензией MIT. Смотрите файл [LICENSE](LICENSE) для получения дополнительной информации.
+## 🙏 Благодарности
 
-## 👨‍💻 Author / Автор
-
-[Nikita Evdokimov](https://github.com/nikevdok) / [Никита Евдокимов](https://github.com/nikevdok)
-
-## 🙏 Acknowledgments / Благодарности
-
-- [MyMemory API](https://mymemory.translated.net/) for providing translation service / за предоставление сервиса перевода
-- [SwiftUI](https://developer.apple.com/xcode/swiftui/) for the amazing framework / за прекрасный фреймворк
-- [Apple](https://www.apple.com) for macOS and development tools / за macOS и инструменты разработки 
+- [MyMemory API](https://mymemory.translated.net/) за предоставление сервиса перевода
+- [SwiftUI](https://developer.apple.com/xcode/swiftui/) за прекрасный фреймворк
+- [Apple](https://www.apple.com) за macOS и инструменты разработки 
