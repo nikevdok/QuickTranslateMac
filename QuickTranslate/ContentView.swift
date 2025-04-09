@@ -239,7 +239,7 @@ struct ContentView: View {
         }
         .environment(\.layoutDirection, sourceLanguage == "ar" ? .rightToLeft : .leftToRight)
         .padding()
-        .frame(width: isHorizontalLayout ? 600 : 400, height: isHorizontalLayout ? 300 : 450)
+        .frame(width: isHorizontalLayout ? 600 : 430, height: isHorizontalLayout ? 300 : 450)
         .background(
             RoundedRectangle(cornerRadius: 12)
                 .fill(backgroundColor)
