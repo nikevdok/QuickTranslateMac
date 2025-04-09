@@ -3,6 +3,9 @@
 ![Version](https://img.shields.io/badge/version-1.2-blue)
 ![Platform](https://img.shields.io/badge/platform-macOS-lightgrey)
 ![License](https://img.shields.io/badge/license-MIT-green)
+![Security](https://img.shields.io/badge/security-protected-red)
+
+⚠️ **Security Notice**: This application contains digital watermarks and protection measures. Unauthorized copying, modification, or distribution is strictly prohibited. See [SECURITY.md](SECURITY.md) for details.
 
 [English](#english) | [Русский](#русский)
 
