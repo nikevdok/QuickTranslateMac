@@ -104,7 +104,7 @@ See the [LICENSE](LICENSE) file for complete terms and conditions.
 
 If you find QuickTranslate useful and want to support its development, you can make a contribution through Revolut:
 
-[![Support via Revolut](https://img.shields.io/badge/Support%20via-Revolut-blue)](https://checkout.revolut.com/pay/b1986b82-57e6-487f-9027-bfd46260df8c)
+[![Support via Revolut](https://img.shields.io/badge/Support%20via-Revolut-blue)](https://checkout.revolut.com/pay/15f055d0-8d94-4168-8f6f-24a0e3afc3a4)
 
 Your support helps me continue improving the app and adding new features. Thank you for your generosity!
 
