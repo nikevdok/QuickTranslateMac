@@ -100,6 +100,14 @@ See the [LICENSE](LICENSE) file for complete terms and conditions.
 - [SwiftUI](https://developer.apple.com/xcode/swiftui/) for the amazing framework
 - [Apple](https://www.apple.com) for macOS and development tools
 
+## 💝 Support the Project
+
+If you find QuickTranslate useful and want to support its development, you can make a contribution through Revolut:
+
+[![Support via Revolut](https://img.shields.io/badge/Support%20via-Revolut-blue)](https://checkout.revolut.com/pay/b1986b82-57e6-487f-9027-bfd46260df8c)
+
+Your support helps me continue improving the app and adding new features. Thank you for your generosity!
+
 ---
 
 # Русский
